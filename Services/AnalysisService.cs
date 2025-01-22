@@ -26,36 +26,27 @@ namespace DotNetReflectCLI.Services
 
         private string ExtractContextAroundMatch(string code, string searchText, int lineNumber)
         {
-            var codeLines = code.Split('\n');
-            if (lineNumber >= codeLines.Length) return "";
+            var lines = code.Split('\n');
+            if (lineNumber <= 0 || lineNumber > lines.Length) return "";
 
+            var startLine = Math.Max(1, lineNumber - 2);
+            var endLine = Math.Min(lines.Length, lineNumber + 2);
             var contextLines = new List<string>();
-            var targetLine = codeLines[lineNumber].Trim();
 
-            // Take 2 lines before and after the match
-            var contextStart = Math.Max(0, lineNumber - 2);
-            var contextEnd = Math.Min(codeLines.Length - 1, lineNumber + 2);
-
-            // Add marker for start of fragment if not at file start
-            if (contextStart > 0)
-                contextLines.Add("...");
-
-            for (int i = contextStart; i <= contextEnd; i++)
+            // Добавляем предыдущие строки
+            for (int i = startLine - 1; i < lineNumber - 1; i++)
             {
-                var line = codeLines[i].Trim();
-                if (i == lineNumber)
-                {
-                    contextLines.Add(">>> " + line); // Mark the found line
-                }
-                else if (!string.IsNullOrWhiteSpace(line))
-                {
-                    contextLines.Add("    " + line);
-                }
+                contextLines.Add(lines[i].Trim());
             }
 
-            // Add marker for end of fragment if not at file end
-            if (contextEnd < codeLines.Length - 1)
-                contextLines.Add("...");
+            // Добавляем строку с совпадением
+            contextLines.Add(lines[lineNumber - 1].Trim());
+
+            // Добавляем следующие строки
+            for (int i = lineNumber; i < endLine; i++)
+            {
+                contextLines.Add(lines[i].Trim());
+            }
 
             return string.Join("\n", contextLines);
         }

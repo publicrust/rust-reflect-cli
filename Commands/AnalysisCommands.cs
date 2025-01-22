@@ -82,27 +82,70 @@ public static class AnalysisCommands
 
                 foreach (var (assembly, results) in totalResults)
                 {
-                    Console.WriteLine($"\nIn assembly: {Path.GetFileName(assembly)}");
+                    Console.WriteLine($"\n// Assembly: {Path.GetFileName(assembly)}");
                     foreach (var result in results)
                     {
-                        Console.WriteLine($"\nFound matches in type {result.Type}:");
+                        var namespaceName = result.Type.Contains(".") ? 
+                            result.Type.Substring(0, result.Type.LastIndexOf('.')) : 
+                            "";
+                        var typeName = result.Type.Contains(".") ? 
+                            result.Type.Substring(result.Type.LastIndexOf('.') + 1) : 
+                            result.Type;
+
+                        Console.WriteLine($"namespace {namespaceName}");
+                        Console.WriteLine("{");
+                        
+                        // Выводим определение типа
+                        Console.WriteLine($"    public class {typeName}");
+                        Console.WriteLine("    {");
+
                         foreach (var location in result.Locations)
                         {
+                            // Получаем контекст вокруг найденного места
+                            var contextLines = location.Context.Split('\n')
+                                .Select(line => line.Trim())
+                                .Where(line => !string.IsNullOrWhiteSpace(line))
+                                .ToList();
+
+                            var lineNumber = location.LineNumber;
+                            var startLine = Math.Max(1, lineNumber - 1);
+
+                            // Выводим контекст с номерами строк
                             if (location.MemberType == "StringLiteral")
                             {
-                                Console.WriteLine($"\n  String literal in method: {location.Member}");
+                                // Для строковых литералов показываем контекст метода
+                                Console.WriteLine($"        {startLine - 1} --> // ...");
+                                for (int i = 0; i < contextLines.Count; i++)
+                                {
+                                    Console.WriteLine($"        {startLine + i} --> {contextLines[i]}");
+                                }
+                                Console.WriteLine($"        {startLine + contextLines.Count} --> // ...");
                             }
                             else
                             {
-                                Console.WriteLine($"\n  {location.MemberType}: {location.Member}");
+                                // Для методов, полей и свойств показываем их определение
+                                switch (location.MemberType)
+                                {
+                                    case "Method":
+                                        foreach (var line in contextLines)
+                                        {
+                                            Console.WriteLine($"        {line}");
+                                        }
+                                        break;
+                                    case "Field":
+                                        Console.WriteLine($"        public {location.Member};");
+                                        break;
+                                    case "Property":
+                                        Console.WriteLine($"        public {location.Member} {{ get; set; }}");
+                                        break;
+                                }
                             }
-                            if (location.LineNumber > 0)
-                            {
-                                Console.WriteLine($"  Line: {location.LineNumber}");
-                            }
-                            Console.WriteLine("  Context:");
-                            Console.WriteLine($"  {location.Context}");
+                            Console.WriteLine();
                         }
+
+                        Console.WriteLine("    }");
+                        Console.WriteLine("}");
+                        Console.WriteLine();
                     }
                 }
             }
