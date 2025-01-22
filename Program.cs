@@ -23,9 +23,9 @@ class Program
         rootCommand.AddCommand(DecompilationCommands.CreateDecompileMethodCommand(decompilationService, inputOption));
 
         // Добавляем команды анализа
-        rootCommand.AddCommand(AnalysisCommands.CreateAnalyzeTypeCommand(analysisService, inputOption));
-        rootCommand.AddCommand(AnalysisCommands.CreateAnalyzeMethodCommand(analysisService, inputOption));
-        rootCommand.AddCommand(AnalysisCommands.CreateSearchCommand(analysisService, inputOption));
+        rootCommand.AddCommand(new AnalyzeCommand(analysisService));
+        rootCommand.AddCommand(AnalysisCommands.CreateMethodAnalysisCommand(analysisService));
+        rootCommand.AddCommand(AnalysisCommands.CreateSearchCommand(analysisService));
 
         return await rootCommand.InvokeAsync(args);
     }
