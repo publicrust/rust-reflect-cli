@@ -94,53 +94,19 @@ public static class AnalysisCommands
 
                         Console.WriteLine($"namespace {namespaceName}");
                         Console.WriteLine("{");
-                        
-                        // Выводим определение типа
                         Console.WriteLine($"    public class {typeName}");
                         Console.WriteLine("    {");
-
+                        
+                        var processedMethods = new HashSet<string>();
                         foreach (var location in result.Locations)
                         {
-                            // Получаем контекст вокруг найденного места
-                            var contextLines = location.Context.Split('\n')
-                                .Select(line => line.Trim())
-                                .Where(line => !string.IsNullOrWhiteSpace(line))
-                                .ToList();
-
-                            var lineNumber = location.LineNumber;
-                            var startLine = Math.Max(1, lineNumber - 1);
-
-                            // Выводим контекст с номерами строк
-                            if (location.MemberType == "StringLiteral")
+                            var methodSignature = $"{location.Member}_{location.LineNumber}";
+                            if (!processedMethods.Contains(methodSignature))
                             {
-                                // Для строковых литералов показываем контекст метода
-                                Console.WriteLine($"        {startLine - 1} --> // ...");
-                                for (int i = 0; i < contextLines.Count; i++)
-                                {
-                                    Console.WriteLine($"        {startLine + i} --> {contextLines[i]}");
-                                }
-                                Console.WriteLine($"        {startLine + contextLines.Count} --> // ...");
+                                Console.WriteLine($"        {location.Context}");
+                                Console.WriteLine();
+                                processedMethods.Add(methodSignature);
                             }
-                            else
-                            {
-                                // Для методов, полей и свойств показываем их определение
-                                switch (location.MemberType)
-                                {
-                                    case "Method":
-                                        foreach (var line in contextLines)
-                                        {
-                                            Console.WriteLine($"        {line}");
-                                        }
-                                        break;
-                                    case "Field":
-                                        Console.WriteLine($"        public {location.Member};");
-                                        break;
-                                    case "Property":
-                                        Console.WriteLine($"        public {location.Member} {{ get; set; }}");
-                                        break;
-                                }
-                            }
-                            Console.WriteLine();
                         }
 
                         Console.WriteLine("    }");

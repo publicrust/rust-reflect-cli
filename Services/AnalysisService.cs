@@ -27,25 +27,107 @@ namespace DotNetReflectCLI.Services
         private string ExtractContextAroundMatch(string code, string searchText, int lineNumber)
         {
             var lines = code.Split('\n');
-            if (lineNumber <= 0 || lineNumber > lines.Length) return "";
-
-            var startLine = Math.Max(1, lineNumber - 2);
-            var endLine = Math.Min(lines.Length, lineNumber + 2);
-            var contextLines = new List<string>();
-
-            // Добавляем предыдущие строки
-            for (int i = startLine - 1; i < lineNumber - 1; i++)
+            if (lineNumber <= 0 || lineNumber > lines.Length)
             {
-                contextLines.Add(lines[i].Trim());
+                return "";
             }
 
-            // Добавляем строку с совпадением
-            contextLines.Add(lines[lineNumber - 1].Trim());
+            var contextLines = new List<string>();
+            var methodStart = -1;
+            var methodEnd = -1;
 
-            // Добавляем следующие строки
-            for (int i = lineNumber; i < endLine; i++)
+            // Ищем начало метода
+            for (int i = lineNumber - 1; i >= 0; i--)
             {
-                contextLines.Add(lines[i].Trim());
+                var line = lines[i].Trim();
+                if (line.Contains("public") || line.Contains("private") || line.Contains("protected"))
+                {
+                    methodStart = i;
+                    break;
+                }
+            }
+
+            // Ищем конец метода
+            if (methodStart != -1)
+            {
+                var braceCount = 0;
+                var foundFirstBrace = false;
+                for (int i = methodStart; i < lines.Length; i++)
+                {
+                    var line = lines[i].Trim();
+                    if (line.Contains("{"))
+                    {
+                        foundFirstBrace = true;
+                        braceCount++;
+                    }
+                    if (line.Contains("}"))
+                    {
+                        braceCount--;
+                        if (foundFirstBrace && braceCount == 0)
+                        {
+                            methodEnd = i;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (methodStart != -1 && methodEnd != -1)
+            {
+                // Проверяем наличие атрибутов
+                if (methodStart > 0 && lines[methodStart - 1].Trim().StartsWith("["))
+                {
+                    contextLines.Add($"{methodStart} --> {lines[methodStart - 1].Trim()}");
+                }
+                
+                // Добавляем объявление метода
+                contextLines.Add($"{methodStart + 1} --> {lines[methodStart].Trim()} {{");
+
+                // Если есть код до контекста, добавляем многоточие
+                if (lineNumber - methodStart > 3)
+                {
+                    contextLines.Add("    ....");
+                }
+
+                // Добавляем 2 строки до совпадения
+                if (lineNumber - 2 > methodStart)
+                {
+                    contextLines.Add($"{lineNumber - 1} --> {lines[lineNumber - 2].Trim()}");
+                }
+                if (lineNumber - 1 > methodStart)
+                {
+                    contextLines.Add($"{lineNumber} --> {lines[lineNumber - 1].Trim()}");
+                }
+
+                // Добавляем строку с совпадением
+                contextLines.Add($"{lineNumber + 1} --> {lines[lineNumber].Trim()}");
+
+                // Добавляем 1 строку после совпадения
+                if (lineNumber + 1 < methodEnd)
+                {
+                    contextLines.Add($"{lineNumber + 2} --> {lines[lineNumber + 1].Trim()}");
+                }
+
+                // Если есть код после контекста, добавляем многоточие
+                if (methodEnd - lineNumber > 2)
+                {
+                    contextLines.Add("    ....");
+                }
+
+                contextLines.Add("}");
+            }
+            else
+            {
+                // Для обычного кода (не метод) добавляем контекст
+                if (lineNumber > 1)
+                {
+                    contextLines.Add($"{lineNumber - 1} --> {lines[lineNumber - 2].Trim()}");
+                }
+                contextLines.Add($"{lineNumber} --> {lines[lineNumber - 1].Trim()}");
+                if (lineNumber < lines.Length)
+                {
+                    contextLines.Add($"{lineNumber + 1} --> {lines[lineNumber].Trim()}");
+                }
             }
 
             return string.Join("\n", contextLines);
@@ -156,11 +238,6 @@ namespace DotNetReflectCLI.Services
                 {
                     Console.WriteLine($"Warning: Failed to analyze assembly '{assemblyPath}': {ex.Message}");
                 }
-            }
-
-            if (!results.Any())
-            {
-                Console.WriteLine($"No usages of type '{typeName}' found in the specified path.");
             }
 
             return results;
@@ -403,11 +480,6 @@ namespace DotNetReflectCLI.Services
                 }
             }
 
-            if (!results.Any())
-            {
-                Console.WriteLine($"No usages of method '{typeName}.{methodName}' found in the specified path.");
-            }
-
             return results;
         }
 
@@ -547,11 +619,6 @@ namespace DotNetReflectCLI.Services
                 }
             }
 
-            if (!results.Any())
-            {
-                Console.WriteLine($"No matches found for '{searchText}' in the specified path.");
-            }
-
             return results.Values;
         }
 
@@ -561,7 +628,6 @@ namespace DotNetReflectCLI.Services
             var results = new List<SearchResult>();
             var isStringLiteral = pattern.StartsWith("\"") && pattern.EndsWith("\"");
 
-            // Если это не поиск строкового литерала, удаляем кавычки (если они есть)
             var searchText = isStringLiteral ? pattern.Trim('"') : pattern.Trim('"', '\'');
             var regex = new Regex(isStringLiteral ? Regex.Escape(searchText) : pattern.Replace("*", ".*"), RegexOptions.IgnoreCase);
 
@@ -569,107 +635,76 @@ namespace DotNetReflectCLI.Services
             {
                 var searchResult = new SearchResult { Type = type.FullName };
 
-                // Поиск строковых литералов (всегда для поиска без кавычек, и только для поиска с кавычками)
-                if (!isStringLiteral || isStringLiteral)
+                foreach (var method in type.Methods)
                 {
-                    foreach (var method in type.Methods)
+                    try
                     {
-                        try
+                        var methodBody = decompiler.DecompileAsString(method.MetadataToken);
+                        var lines = methodBody.Split('\n').Select(l => l.TrimEnd()).ToList();
+                        
+                        // Поиск в строковых литералах
+                        for (int i = 0; i < lines.Count; i++)
                         {
-                            var methodBody = decompiler.DecompileAsString(method.MetadataToken);
-                            var lines = methodBody.Split('\n');
-                            for (int i = 0; i < lines.Length; i++)
+                            var line = lines[i];
+                            var matches = Regex.Matches(line, "(?:@|\"|\\$\")(?:[^\"\\\\]|\\\\.)*\"");
+                            foreach (Match match in matches)
                             {
-                                var line = lines[i];
-                                // Ищем строки вида: "текст" или @"текст" или $"текст"
-                                var matches = Regex.Matches(line, "(?:@|\"|\\$\")(?:[^\"\\\\]|\\\\.)*\"");
-                                foreach (Match match in matches)
+                                var literal = match.Value.TrimStart('@', '$').Trim('"');
+                                literal = Regex.Unescape(literal);
+                                
+                                if (regex.IsMatch(literal))
                                 {
-                                    var literal = match.Value;
-                                    // Убираем префиксы (@, $) и кавычки
-                                    literal = literal.TrimStart('@', '$').Trim('"');
-                                    // Раскодируем экранированные символы
-                                    literal = Regex.Unescape(literal);
-                                    
-                                    if (regex.IsMatch(literal))
+                                    var context = ExtractContextAroundMatch(methodBody, literal, i + 1);
+                                    if (!string.IsNullOrEmpty(context))
                                     {
                                         searchResult.Locations.Add(new CodeLocation
                                         {
                                             Type = type.FullName,
                                             Member = method.Name,
                                             MemberType = "StringLiteral",
-                                            Context = line.Trim(),
+                                            Context = context,
                                             LineNumber = i + 1
                                         });
-                                        break; // Один метод - одно совпадение
                                     }
+                                    break;
                                 }
                             }
                         }
-                        catch
-                        {
-                            // Пропускаем методы, которые не удалось декомпилировать
-                            continue;
-                        }
-                    }
-                }
 
-                // Поиск по именам типов, методов, свойств и полей (только для поиска без кавычек)
-                if (!isStringLiteral)
-                {
-                    if (regex.IsMatch(type.Name))
-                    {
-                        searchResult.Locations.Add(new CodeLocation
+                        // Поиск по имени метода
+                        if (!isStringLiteral && regex.IsMatch(method.Name))
                         {
-                            Type = type.FullName,
-                            Member = type.Name,
-                            MemberType = "Type",
-                            Context = $"Type name matches pattern: {type.Name}"
-                        });
-                    }
-
-                    foreach (var method in type.Methods)
-                    {
-                        if (regex.IsMatch(method.Name))
-                        {
-                            var methodBody = decompiler.DecompileAsString(method.MetadataToken);
-                            searchResult.Locations.Add(new CodeLocation
+                            var methodStart = -1;
+                            for (int i = 0; i < lines.Count; i++)
                             {
-                                Type = type.FullName,
-                                Member = method.Name,
-                                MemberType = "Method",
-                                Context = ExtractContextAroundMatch(methodBody, method.Name, GetLineNumber(methodBody, method.Name)),
-                                LineNumber = GetLineNumber(methodBody, method.Name)
-                            });
+                                if (lines[i].Contains(method.Name) && 
+                                    (lines[i].Contains("public") || lines[i].Contains("private") || lines[i].Contains("protected")))
+                                {
+                                    methodStart = i;
+                                    break;
+                                }
+                            }
+
+                            if (methodStart != -1)
+                            {
+                                var context = ExtractContextAroundMatch(methodBody, method.Name, methodStart + 1);
+                                if (!string.IsNullOrEmpty(context))
+                                {
+                                    searchResult.Locations.Add(new CodeLocation
+                                    {
+                                        Type = type.FullName,
+                                        Member = method.Name,
+                                        MemberType = "Method",
+                                        Context = context,
+                                        LineNumber = methodStart + 1
+                                    });
+                                }
+                            }
                         }
                     }
-
-                    foreach (var property in type.Properties)
+                    catch (Exception)
                     {
-                        if (regex.IsMatch(property.Name))
-                        {
-                            searchResult.Locations.Add(new CodeLocation
-                            {
-                                Type = type.FullName,
-                                Member = property.Name,
-                                MemberType = "Property",
-                                Context = $"Property name matches pattern: {property.Name}"
-                            });
-                        }
-                    }
-
-                    foreach (var field in type.Fields)
-                    {
-                        if (regex.IsMatch(field.Name))
-                        {
-                            searchResult.Locations.Add(new CodeLocation
-                            {
-                                Type = type.FullName,
-                                Member = field.Name,
-                                MemberType = "Field",
-                                Context = $"Field name matches pattern: {field.Name}"
-                            });
-                        }
+                        continue;
                     }
                 }
 
