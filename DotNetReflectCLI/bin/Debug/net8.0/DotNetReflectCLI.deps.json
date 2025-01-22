@@ -1,0 +1,134 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "DotNetReflectCLI/1.0.0": {
+        "dependencies": {
+          "ICSharpCode.Decompiler": "9.0.0.7889",
+          "System.CommandLine": "2.0.0-beta4.22272.1"
+        },
+        "runtime": {
+          "DotNetReflectCLI.dll": {}
+        }
+      },
+      "ICSharpCode.Decompiler/9.0.0.7889": {
+        "dependencies": {
+          "System.Collections.Immutable": "6.0.0",
+          "System.Reflection.Metadata": "6.0.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/ICSharpCode.Decompiler.dll": {
+            "assemblyVersion": "9.0.0.7889",
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "System.Collections.Immutable/6.0.0": {
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
+        }
+      },
+      "System.CommandLine/2.0.0-beta4.22272.1": {
+        "runtime": {
+          "lib/net6.0/System.CommandLine.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.22.27201"
+          }
+        },
+        "resources": {
+          "lib/net6.0/cs/System.CommandLine.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/net6.0/de/System.CommandLine.resources.dll": {
+            "locale": "de"
+          },
+          "lib/net6.0/es/System.CommandLine.resources.dll": {
+            "locale": "es"
+          },
+          "lib/net6.0/fr/System.CommandLine.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/net6.0/it/System.CommandLine.resources.dll": {
+            "locale": "it"
+          },
+          "lib/net6.0/ja/System.CommandLine.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/net6.0/ko/System.CommandLine.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/net6.0/pl/System.CommandLine.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/net6.0/pt-BR/System.CommandLine.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/net6.0/ru/System.CommandLine.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/net6.0/tr/System.CommandLine.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/net6.0/zh-Hans/System.CommandLine.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/net6.0/zh-Hant/System.CommandLine.resources.dll": {
+            "locale": "zh-Hant"
+          }
+        }
+      },
+      "System.Reflection.Metadata/6.0.0": {
+        "dependencies": {
+          "System.Collections.Immutable": "6.0.0"
+        }
+      },
+      "System.Runtime.CompilerServices.Unsafe/6.0.0": {}
+    }
+  },
+  "libraries": {
+    "DotNetReflectCLI/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ICSharpCode.Decompiler/9.0.0.7889": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-J048pCI6whqr794fC3g2kOt0soZrGhWb8wzbckvu+13aXyPZ+hGOql3d5NLKbORqxVTVUP30LJUUU2iG5ggM8g==",
+      "path": "icsharpcode.decompiler/9.0.0.7889",
+      "hashPath": "icsharpcode.decompiler.9.0.0.7889.nupkg.sha512"
+    },
+    "System.Collections.Immutable/6.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-l4zZJ1WU2hqpQQHXz1rvC3etVZN+2DLmQMO79FhOTZHMn8tDRr+WU287sbomD0BETlmKDn0ygUgVy9k5xkkJdA==",
+      "path": "system.collections.immutable/6.0.0",
+      "hashPath": "system.collections.immutable.6.0.0.nupkg.sha512"
+    },
+    "System.CommandLine/2.0.0-beta4.22272.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-1uqED/q2H0kKoLJ4+hI2iPSBSEdTuhfCYADeJrAqERmiGQ2NNacYKRNEQ+gFbU4glgVyK8rxI+ZOe1onEtr/Pg==",
+      "path": "system.commandline/2.0.0-beta4.22272.1",
+      "hashPath": "system.commandline.2.0.0-beta4.22272.1.nupkg.sha512"
+    },
+    "System.Reflection.Metadata/6.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-sffDOcex1C3HO5kDolOYcWXTwRpZY/LvJujM6SMjn63fWMJWchYAAmkoAJXlbpZ5yf4d+KMgxd+LeETa4gD9sQ==",
+      "path": "system.reflection.metadata/6.0.0",
+      "hashPath": "system.reflection.metadata.6.0.0.nupkg.sha512"
+    },
+    "System.Runtime.CompilerServices.Unsafe/6.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-/iUeP3tq1S0XdNNoMz5C9twLSrM/TH+qElHkXWaPvuNOt+99G75NrV0OS2EqHx5wMN7popYjpc8oTjC1y16DLg==",
+      "path": "system.runtime.compilerservices.unsafe/6.0.0",
+      "hashPath": "system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512"
+    }
+  }
+}
