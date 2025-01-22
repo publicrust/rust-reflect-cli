@@ -8,17 +8,17 @@ class Program
 {
     static async Task<int> Main(string[] args)
     {
-        var rootCommand = new RootCommand("CLI utility for .NET assembly analysis and decompilation");
+        var rootCommand = new RootCommand("DotNetReflectCLI - Утилита для анализа и работы с декомпилированным .NET кодом");
         var decompilationService = new DecompilationService();
         var analysisService = new AnalysisService(decompilationService);
 
         var inputOption = new Option<FileInfo>(
             "--input",
-            "Input assembly file to analyze"
+            "Input assembly file or directory containing assemblies"
         ) { IsRequired = true };
 
         // Добавляем команды декомпиляции
-        rootCommand.AddCommand(DecompilationCommands.CreateDecompileCommand(decompilationService, inputOption));
+        // rootCommand.AddCommand(DecompilationCommands.CreateDecompileCommand(decompilationService, inputOption));
         rootCommand.AddCommand(DecompilationCommands.CreateDecompileTypeCommand(decompilationService, inputOption));
         rootCommand.AddCommand(DecompilationCommands.CreateDecompileMethodCommand(decompilationService, inputOption));
 
@@ -26,6 +26,7 @@ class Program
         rootCommand.AddCommand(new AnalyzeCommand(analysisService));
         rootCommand.AddCommand(AnalysisCommands.CreateMethodAnalysisCommand(analysisService));
         rootCommand.AddCommand(AnalysisCommands.CreateSearchCommand(analysisService));
+        rootCommand.AddCommand(new HelpCommand());
 
         return await rootCommand.InvokeAsync(args);
     }

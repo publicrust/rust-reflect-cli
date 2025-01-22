@@ -13,6 +13,14 @@ A CLI utility for analyzing and working with decompiled .NET code.
 
 ## Installation
 
+### Option 1: Install as .NET Tool (Recommended)
+
+```bash
+dotnet tool install --global DotNetReflectCLI
+```
+
+### Option 2: Build from Source
+
 ```bash
 git clone https://github.com/yourusername/DotNetReflectCLI.git
 cd DotNetReflectCLI
@@ -21,40 +29,42 @@ dotnet build
 
 ## Usage
 
+After installing as a .NET tool, you can use the `dotnet reflect` command:
+
 ### Code Search
 
 ```bash
 # Search in a file
-dotnet run search --input path/to/Assembly.dll --string "SearchText"
+dotnet reflect search --input path/to/Assembly.dll --string "SearchText"
 
 # Search in a directory
-dotnet run search --input path/to/Managed --string "SearchText"
+dotnet reflect search --input path/to/Managed --string "SearchText"
 
 # Search with namespace filtering
-dotnet run search --input path/to/Assembly.dll --string "SearchText" --namespace "MyNamespace"
+dotnet reflect search --input path/to/Assembly.dll --string "SearchText" --namespace "MyNamespace"
 ```
 
 ### Decompilation
 
 ```bash
 # Decompile entire assembly
-dotnet run decompile --input Assembly.dll --output ./output
+dotnet reflect decompile --input Assembly.dll --output ./output
 
 # Decompile specific type
-dotnet run decompile-type --input Assembly.dll --type "MyNamespace.MyClass"
+dotnet reflect decompile-type --input Assembly.dll --type "MyNamespace.MyClass"
 
 # Decompile method
-dotnet run decompile-method --input Assembly.dll --type "MyNamespace.MyClass" --method "MyMethod"
+dotnet reflect decompile-method --input Assembly.dll --type "MyNamespace.MyClass" --method "MyMethod"
 ```
 
 ### Usage Analysis
 
 ```bash
 # Find type usages
-dotnet run analyze --input Assembly.dll --type "MyNamespace.MyClass"
+dotnet reflect analyze --input Assembly.dll --type "MyNamespace.MyClass"
 
 # Find method calls
-dotnet run analyze-method --input Assembly.dll --method "MyNamespace.MyClass.MyMethod"
+dotnet reflect analyze-method --input Assembly.dll --method "MyNamespace.MyClass.MyMethod"
 ```
 
 ## Search Results Format
