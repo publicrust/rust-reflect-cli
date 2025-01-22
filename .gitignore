@@ -1,0 +1,28 @@
+## .NET Core
+bin/
+obj/
+*.dll
+*.pdb
+*.user
+*.suo
+*.cache
+*.log
+
+## VS Code
+.vscode/
+*.code-workspace
+
+## Visual Studio
+.vs/
+*.sln.docstates
+*.suo
+*.user
+*.userosscache
+*.sln.ide/
+
+## Rider
+.idea/
+*.sln.iml
+
+## macOS
+.DS_Store 
