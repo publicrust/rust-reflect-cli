@@ -1,107 +1,44 @@
 # rust-reflect-cli
 
-A CLI utility for analyzing and working with decompiled Rust .NET code.
+A concise CLI tool for decompiling and analyzing Rust .NET assemblies.
 
-## Features
-
-- Decompile .NET assemblies to C#
-- Analyze decompiled code
-- Search through code and IL instructions
-- Find type and method usages
-- Support for searching in both individual files and directories
-- Smart context-aware search results
+## Why Use It?
+- Quickly find hooks (e.g., `OnPlayerConnected`) and methods (e.g., `GetHeldEntity`) in Rust's actual codebase.
+- Verify method signatures to avoid errors and inconsistencies during plugin development.
+- Ensure compatibility with the latest game updates.
 
 ## Installation
-
-### Option 1: Install as .NET Tool (Recommended)
-
 ```bash
 dotnet tool install --global rust-reflect-cli
 ```
-
-### Option 2: Build from Source
-
+Or build from source:
 ```bash
-git clone https://github.com/yourusername/rust-reflect-cli.git
+git clone https://github.com/publicrust/rust-reflect-cli.git
 cd rust-reflect-cli
 dotnet build
 ```
 
-## Usage
-
-After installing as a .NET tool, you can use the `rust-reflect` command:
-
-### Code Search
-
+## Key Commands
 ```bash
-# Search in a file
-rust-reflect search --input path/to/Assembly.dll --string "SearchText"
+# Search for hooks, methods, or strings
+rust-reflect search --input /path/to/Managed --string "OnPlayerConnected"
 
-# Search in a directory
-rust-reflect search --input path/to/Managed --string "SearchText"
+# Decompile an assembly or a specific type
+rust-reflect decompile-type --input Assembly.dll --type "BasePlayer"
 
-# Search with namespace filtering
-rust-reflect search --input path/to/Assembly.dll --string "SearchText" --namespace "MyNamespace"
+# Analyze method usage
+rust-reflect analyze-method --input /path/to/Managed \
+  --type "BasePlayer" --method "GetHeldEntity"
 ```
 
-### Decompilation
-
-```bash
-# Decompile entire assembly
-rust-reflect decompile --input Assembly.dll --output ./output
-
-# Decompile specific type
-rust-reflect decompile-type --input Assembly.dll --type "MyNamespace.MyClass"
-
-# Decompile method
-rust-reflect decompile-method --input Assembly.dll --type "MyNamespace.MyClass" --method "MyMethod"
-```
-
-### Usage Analysis
-
-```bash
-# Find type usages
-rust-reflect analyze --input Assembly.dll --type "MyNamespace.MyClass"
-
-# Find method calls
-rust-reflect analyze-method --input Assembly.dll --method "MyNamespace.MyClass.MyMethod"
-```
-
-## Search Results Format
-
-The search results are displayed in a tree-like structure:
-
-```
-Type: MyNamespace.MyClass
-  Method: MyMethod
-  Line: 42
-  Context:
-    ...
-    public void Initialize()
-    >>> MySearchedText("param1", param2);
-    AnotherMethod();
-    ...
-```
-
-Where:
-- `>>>` indicates the exact line where the match was found
-- `...` indicates omitted code
-- Context shows 2 lines before and after the match
-
-## Requirements
-
-- .NET 8.0 SDK
-- ICSharpCode.Decompiler
-- System.CommandLine
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+## Usage in Rust Plugin Development
+1. **Hook Verification**: Before implementing code, confirm the existence of necessary hooks (e.g., `OnPlayerConnected`).
+2. **Method Details**: For methods like `GetHeldEntity`, check where and how they are called in the actual assembly.
+3. **Stay Updated**: After Rust updates, run `search` or `analyze` to identify changes in the game's codebase.
 
 ## License
+Licensed under the MIT License. See the LICENSE file for details.
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+```
+
+Use `rust-reflect-cli` as an essential tool to stay aligned with Rust's actual codebase and avoid potential issues in your plugins.
