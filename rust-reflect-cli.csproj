@@ -9,15 +9,15 @@
     
     <!-- NuGet package settings -->
     <PackAsTool>true</PackAsTool>
-    <ToolCommandName>dotnet-reflect</ToolCommandName>
-    <PackageId>DotNetReflectCLI</PackageId>
+    <ToolCommandName>rust-reflect</ToolCommandName>
+    <PackageId>rust-reflect-cli</PackageId>
     <Version>1.0.0</Version>
-    <Authors>DotNetReflectCLI Contributors</Authors>
-    <Description>A CLI utility for analyzing and working with decompiled .NET code</Description>
-    <PackageTags>dotnet;cli;decompiler;analyzer;reflection;search</PackageTags>
+    <Authors>rust-reflect-cli Contributors</Authors>
+    <Description>A CLI utility for analyzing and working with decompiled Rust .NET code</Description>
+    <PackageTags>rust;dotnet;cli;decompiler;analyzer;reflection;search</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/yourusername/DotNetReflectCLI</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/yourusername/DotNetReflectCLI.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/yourusername/rust-reflect-cli</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/yourusername/rust-reflect-cli.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 

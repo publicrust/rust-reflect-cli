@@ -8,7 +8,7 @@ class Program
 {
     static async Task<int> Main(string[] args)
     {
-        var rootCommand = new RootCommand("DotNetReflectCLI - Утилита для анализа и работы с декомпилированным .NET кодом");
+        var rootCommand = new RootCommand("rust-reflect-cli - Утилита для анализа и работы с декомпилированным Rust .NET кодом");
         var decompilationService = new DecompilationService();
         var analysisService = new AnalysisService(decompilationService);
 
@@ -18,7 +18,7 @@ class Program
         ) { IsRequired = true };
 
         // Добавляем команды декомпиляции
-        // rootCommand.AddCommand(DecompilationCommands.CreateDecompileCommand(decompilationService, inputOption));
+        rootCommand.AddCommand(DecompilationCommands.CreateDecompileCommand(decompilationService, inputOption));
         rootCommand.AddCommand(DecompilationCommands.CreateDecompileTypeCommand(decompilationService, inputOption));
         rootCommand.AddCommand(DecompilationCommands.CreateDecompileMethodCommand(decompilationService, inputOption));
 

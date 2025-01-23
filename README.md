@@ -1,6 +1,6 @@
-# DotNetReflectCLI
+# rust-reflect-cli
 
-A CLI utility for analyzing and working with decompiled .NET code.
+A CLI utility for analyzing and working with decompiled Rust .NET code.
 
 ## Features
 
@@ -16,55 +16,55 @@ A CLI utility for analyzing and working with decompiled .NET code.
 ### Option 1: Install as .NET Tool (Recommended)
 
 ```bash
-dotnet tool install --global DotNetReflectCLI
+dotnet tool install --global rust-reflect-cli
 ```
 
 ### Option 2: Build from Source
 
 ```bash
-git clone https://github.com/yourusername/DotNetReflectCLI.git
-cd DotNetReflectCLI
+git clone https://github.com/yourusername/rust-reflect-cli.git
+cd rust-reflect-cli
 dotnet build
 ```
 
 ## Usage
 
-After installing as a .NET tool, you can use the `dotnet reflect` command:
+After installing as a .NET tool, you can use the `rust-reflect` command:
 
 ### Code Search
 
 ```bash
 # Search in a file
-dotnet reflect search --input path/to/Assembly.dll --string "SearchText"
+rust-reflect search --input path/to/Assembly.dll --string "SearchText"
 
 # Search in a directory
-dotnet reflect search --input path/to/Managed --string "SearchText"
+rust-reflect search --input path/to/Managed --string "SearchText"
 
 # Search with namespace filtering
-dotnet reflect search --input path/to/Assembly.dll --string "SearchText" --namespace "MyNamespace"
+rust-reflect search --input path/to/Assembly.dll --string "SearchText" --namespace "MyNamespace"
 ```
 
 ### Decompilation
 
 ```bash
 # Decompile entire assembly
-dotnet reflect decompile --input Assembly.dll --output ./output
+rust-reflect decompile --input Assembly.dll --output ./output
 
 # Decompile specific type
-dotnet reflect decompile-type --input Assembly.dll --type "MyNamespace.MyClass"
+rust-reflect decompile-type --input Assembly.dll --type "MyNamespace.MyClass"
 
 # Decompile method
-dotnet reflect decompile-method --input Assembly.dll --type "MyNamespace.MyClass" --method "MyMethod"
+rust-reflect decompile-method --input Assembly.dll --type "MyNamespace.MyClass" --method "MyMethod"
 ```
 
 ### Usage Analysis
 
 ```bash
 # Find type usages
-dotnet reflect analyze --input Assembly.dll --type "MyNamespace.MyClass"
+rust-reflect analyze --input Assembly.dll --type "MyNamespace.MyClass"
 
 # Find method calls
-dotnet reflect analyze-method --input Assembly.dll --method "MyNamespace.MyClass.MyMethod"
+rust-reflect analyze-method --input Assembly.dll --method "MyNamespace.MyClass.MyMethod"
 ```
 
 ## Search Results Format
