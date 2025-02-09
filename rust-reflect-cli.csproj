@@ -16,8 +16,8 @@
     <Description>A CLI utility for analyzing and working with decompiled Rust .NET code</Description>
     <PackageTags>rust;dotnet;cli;decompiler;analyzer;reflection;search</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/yourusername/rust-reflect-cli</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/yourusername/rust-reflect-cli.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/publicrust/rust-reflect-cli</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/publicrust/rust-reflect-cli.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
